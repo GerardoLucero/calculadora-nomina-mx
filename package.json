@@ -1,79 +1,42 @@
 {
-  "name": "calculadora-nomina-mx"
-  "version": "1.0.0"
-  "type": "module"
-  "description": "Calculadora completa de nómina mexicana con IMSS, ISR, Infonavit y finiquito"
-  "main": "dist/index.js"
-  "module": "dist/index.esm.js"
-  "types": "dist/index.d.ts"
-  "files": [
-    "dist"
-    "README.md"
-    "LICENSE"
-  ]
+  "name": "calculadora-nomina-mx",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Calculadora completa de nómina mexicana con IMSS, ISR, Infonavit y finiquito",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist", "README.md", "LICENSE"],
   "scripts": {
-    "build": "microbundle --no-compress"
-    "build:prod": "microbundle"
-    "test": "jest"
-    "test:watch": "jest --watch"
-    "test:coverage": "jest --coverage"
-    "lint": "eslint src/**/*.js"
-    "lint:fix": "eslint src/**/*.js --fix"
-    "prepare": "npm run build"
+    "build": "microbundle --no-compress",
+    "build:prod": "microbundle",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run lint && npm run build:prod"
-    "version:patch": "npm version patch"
-    "version:minor": "npm version minor"
-    "version:major": "npm version major"
-  }
-  "keywords": [
-    "mexico"
-    "mexican"
-    "mx"
-  ]
-  "author": {
-    "name": "Gerardo Lucero"
-    "email": "tu-email@ejemplo.com"
-  }
-  "license": "MIT"
-  "repository": {
-    "type": "git"
-    "url": "https://github.com/GerardoLucero/calculadora-nomina-mx.git"
-  }
-  "bugs": {
-    "url": "https://github.com/GerardoLucero/calculadora-nomina-mx/issues"
-  }
-  "homepage": "https://github.com/GerardoLucero/calculadora-nomina-mx#readme"
-  "engines": {
-    "node": ">=18.0.0"
-  }
+  },
+  "keywords": ["mexico", "nomina", "payroll", "imss"],
+  "author": {"name": "Gerardo Lucero", "email": "tu-email@ejemplo.com"},
+  "license": "MIT",
+  "repository": {"type": "git", "url": "https://github.com/GerardoLucero/calculadora-nomina-mx.git"},
+  "engines": {"node": ">=18.0.0"},
   "devDependencies": {
-    "@babel/core": "^7.23.0"
-    "@babel/preset-env": "^7.23.0"
-    "@eslint/js": "^8.57.0"
-    "babel-jest": "^29.7.0"
-    "eslint": "^8.57.0"
-    "jest": "^29.7.0"
+    "@babel/core": "^7.23.0",
+    "@babel/preset-env": "^7.23.0",
+    "@eslint/js": "^8.57.0",
+    "babel-jest": "^29.7.0",
+    "eslint": "^8.57.0",
+    "jest": "^29.7.0",
     "microbundle": "^0.15.1"
-  }
-  "dependencies": {
-    "dayjs": "^1.11.10"
-  }
+  },
+  "dependencies": {"dayjs": "^1.11.10"},
   "jest": {
-    "testEnvironment": "node"
-    "transform": {
-      "^.+\\.js$": "babel-jest"
-    }
-    "collectCoverageFrom": [
-      "src/**/*.js"
-      "!src/**/*.test.js"
-    ]
-    "coverageThreshold": {
-      "global": {
-        "branches": 85
-        "functions": 90
-        "lines": 90
-        "statements": 90
-      }
-    }
+    "testEnvironment": "node",
+    "transform": {"^.+\\.js$": "babel-jest"},
+    "collectCoverageFrom": ["src/**/*.js", "!src/**/*.test.js"],
+    "coverageThreshold": {"global": {"branches": 85, "functions": 90, "lines": 90, "statements": 90}}
   }
 }
