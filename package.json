@@ -1,6 +1,6 @@
 {
   "name": "calculadora-nomina-mx",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "module",
   "description": "Calculadora completa de nómina mexicana con IMSS, ISR, Infonavit y finiquito",
   "main": "dist/index.js",
