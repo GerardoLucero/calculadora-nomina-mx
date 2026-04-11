@@ -3,8 +3,8 @@
  * Incluye IMSS, ISR, Infonavit, y todas las deducciones oficiales
  */
 
-// Constantes 2024
-const UMA_2024 = { diaria: 108.57, mensual: 3297.57, anual: 39570.84 };
+// Constantes 2024 (DOF 10-ene-2024)
+const UMA_2024 = { diaria: 108.57, mensual: 3297.57, anual: 39628.05 }; // anual = diaria × 365
 const SALARIO_MINIMO_2024 = { general: 248.93, fronterizo: 374.89 };
 
 // Tarifas IMSS simplificadas
@@ -15,18 +15,18 @@ const TARIFAS_IMSS = {
   guarderias: 0.01, riesgoI: 0.0054, infonavit: 0.05
 };
 
-// Tarifas ISR 2024
+// Tarifas ISR 2024 — Anexo 8 RMF 2024 (DOF), Tabla Art. 96 LISR mensual
 const TARIFAS_ISR = [
-  { min: 0.01, max: 746.04, cuota: 0, tasa: 1.92 },
-  { min: 746.05, max: 6332.05, cuota: 14.32, tasa: 6.40 },
-  { min: 6332.06, max: 11128.01, cuota: 371.83, tasa: 10.88 },
-  { min: 11128.02, max: 12935.82, cuota: 893.63, tasa: 16.00 },
-  { min: 12935.83, max: 15487.71, cuota: 1182.88, tasa: 21.36 },
-  { min: 15487.72, max: 31236.49, cuota: 1727.83, tasa: 23.52 },
-  { min: 31236.50, max: 49233.00, cuota: 5429.49, tasa: 30.00 },
-  { min: 49233.01, max: 93993.90, cuota: 10828.32, tasa: 32.00 },
-  { min: 93993.91, max: 125325.20, cuota: 25123.80, tasa: 34.00 },
-  { min: 125325.21, max: Infinity, cuota: 35775.24, tasa: 35.00 }
+  { min: 0.01,      max: 746.04,    cuota: 0,        tasa: 1.92  },
+  { min: 746.05,    max: 6332.05,   cuota: 14.32,    tasa: 6.40  },
+  { min: 6332.06,   max: 11128.01,  cuota: 371.83,   tasa: 10.88 },
+  { min: 11128.02,  max: 12935.82,  cuota: 893.63,   tasa: 16.00 },
+  { min: 12935.83,  max: 15487.71,  cuota: 1182.88,  tasa: 17.92 },
+  { min: 15487.72,  max: 31236.49,  cuota: 1640.18,  tasa: 21.36 },
+  { min: 31236.50,  max: 49233.00,  cuota: 5004.12,  tasa: 23.52 },
+  { min: 49233.01,  max: 93993.90,  cuota: 9236.90,  tasa: 30.00 },
+  { min: 93993.91,  max: 125325.20, cuota: 22665.17, tasa: 32.00 },
+  { min: 125325.21, max: Infinity,  cuota: 32691.18, tasa: 34.00 }
 ];
 
 const SUBSIDIO_EMPLEO = [
@@ -55,9 +55,10 @@ export function calcularIMSS(salarioIntegrado, claseRiesgo = 'I') {
   const baseCotizacion = Math.min(salarioIntegrado, limiteSuperior);
   const excedente = Math.max(0, salarioIntegrado - (UMA_2024.mensual * 3));
 
-  const cuotaPatronal = baseCotizacion * (TARIFAS_IMSS.enfermedadMaternidad.patronal + 
-    TARIFAS_IMSS.invalidezVida.patronal + TARIFAS_IMSS.retiro + TARIFAS_IMSS.cesantiaVejez + 
-    TARIFAS_IMSS.guarderias + TARIFAS_IMSS.riesgoI + TARIFAS_IMSS.infonavit);
+  // Cuota patronal IMSS — NO incluye Infonavit (es una aportación separada)
+  const cuotaPatronal = baseCotizacion * (TARIFAS_IMSS.enfermedadMaternidad.patronal +
+    TARIFAS_IMSS.invalidezVida.patronal + TARIFAS_IMSS.retiro + TARIFAS_IMSS.cesantiaVejez +
+    TARIFAS_IMSS.guarderias + TARIFAS_IMSS.riesgoI);
 
   const cuotaObrera = baseCotizacion * (TARIFAS_IMSS.enfermedadMaternidad.obrera + 
     TARIFAS_IMSS.invalidezVida.obrera + TARIFAS_IMSS.obreraRCV);
@@ -82,10 +83,14 @@ export function calcularISRNomina(ingresoGravable) {
     throw new Error('El ingreso gravable debe ser mayor o igual a cero');
   }
 
+  if (ingresoGravable === 0) {
+    return { ingresoGravable: 0, isrAntesSubsidio: 0, subsidio: 0, isrFinal: 0, tarifa: null };
+  }
+
   const tarifa = TARIFAS_ISR.find(t => ingresoGravable >= t.min && ingresoGravable <= t.max);
   if (!tarifa) throw new Error('No se encontró tarifa aplicable');
 
-  const excedente = ingresoGravable - tarifa.min + 0.01;
+  const excedente = ingresoGravable - tarifa.min;
   const impuestoMarginal = excedente * (tarifa.tasa / 100);
   const isrAntesSubsidio = tarifa.cuota + impuestoMarginal;
 
@@ -224,11 +229,19 @@ export function calcularFiniquito(empleado, parametros) {
   const salida = new Date(fechaSalida);
   const diasTrabajados = Math.ceil((salida - inicio) / (1000 * 60 * 60 * 24));
 
+  // Días trabajados en el año actual (para aguinaldo proporcional)
+  const añoSalida = salida.getFullYear();
+  const inicioAño = new Date(añoSalida, 0, 1);
+  const diasEnAño = Math.ceil((salida - inicioAño) / (1000 * 60 * 60 * 24));
+
+  // Días pendientes de pago en el período actual (período incompleto)
+  const diasPendientes = diasTrabajados % 30;
+
   const conceptos = {
-    salariosPendientes: 0,
+    salariosPendientes: diasPendientes * salarioDiario,                          // LFT Art. 88
     vacacionesPendientes: diasVacacionesPendientes * salarioDiario,
     primaVacacional: (diasVacacionesPendientes * salarioDiario) * 0.25,
-    aguinaldoProporcional: 0,
+    aguinaldoProporcional: (diasEnAño / 365) * 15 * salarioDiario,              // LFT Art. 87
     indemnizacion: pagarIndemnizacion ? salarioDiario * 90 : 0,
     primaAntiguedad: pagarPrimaAntiguedad ? salarioDiario * 12 : 0
   };
