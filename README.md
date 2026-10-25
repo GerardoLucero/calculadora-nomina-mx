@@ -2,11 +2,9 @@
 
 Calculadora completa de nómina mexicana. Calcula salario neto a partir del salario bruto aplicando IMSS, INFONAVIT, ISR y subsidio al empleo según las tablas oficiales 2024.
 
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerardolucero)
-[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/lucerorios0)
-[![GitHub Stars](https://img.shields.io/github/stars/GerardoLucero/calculadora-nomina-mx?style=social)](https://github.com/GerardoLucero/calculadora-nomina-mx)
 [![npm version](https://badge.fury.io/js/calculadora-nomina-mx.svg)](https://www.npmjs.com/package/calculadora-nomina-mx)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/GerardoLucero/calculadora-nomina-mx/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/GerardoLucero/calculadora-nomina-mx/actions/workflows/ci-cd.yml)
 
 ## Features
 
@@ -134,9 +132,16 @@ npm test
 npm run test:coverage
 ```
 
+## Apoyo
+
+Proyecto de código abierto mantenido en mi tiempo libre. Si te fue útil y quieres agradecerlo:
+
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-FF5E5B?style=flat&logo=ko-fi&logoColor=white)](https://ko-fi.com/gerardolucero)
+[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/lucerorios0)
+
 ## Licencia
 
-MIT © [Gerardo Lucero](https://github.com/GerardoLucero)
+MIT © [Gerardo Lucero](https://github.com/GerardoLucero), ver [LICENSE](LICENSE).
 
 ---
 
