@@ -21,7 +21,7 @@ describe('calculadora-nomina-mx', () => {
     test('debe aplicar límite de 25 UMAs', () => {
       const salarioAlto = 100000;
       const resultado = lib.calcularIMSS(salarioAlto);
-      expect(resultado.baseCotizacion).toBeLessThanOrEqual(3297.57 * 25);
+      expect(resultado.baseCotizacion).toBeLessThanOrEqual(3566.22 * 25);
     });
   });
 
@@ -150,14 +150,39 @@ describe('calculadora-nomina-mx', () => {
   });
 
   describe('obtenerConstantesFiscales', () => {
-    test('debe retornar constantes fiscales 2024', () => {
+    test('debe retornar constantes fiscales 2026', () => {
       const constantes = lib.obtenerConstantesFiscales();
-      expect(constantes).toHaveProperty('año', 2024);
+      expect(constantes).toHaveProperty('año', 2026);
       expect(constantes).toHaveProperty('uma');
       expect(constantes).toHaveProperty('salarioMinimo');
       expect(constantes).toHaveProperty('tarifasIMSS');
       expect(constantes).toHaveProperty('tarifasISR');
-      expect(constantes.uma).toHaveProperty('diaria', 108.57);
+      expect(constantes.uma).toHaveProperty('diaria', 117.31);
+    });
+  });
+
+  describe('Valores verificados a mano (2026)', () => {
+    test('ISR de 10,000: tarifa 2026 menos subsidio de 535.65', () => {
+      // 420.95 + (10000 - 7168.52) x 10.88% = 729.02; menos 535.65 de subsidio
+      const r = lib.calcularISRNomina(10000);
+      expect(r.isrAntesSubsidio).toBeCloseTo(729.02, 1);
+      expect(r.subsidio).toBe(535.65);
+      expect(r.isrFinal).toBeCloseTo(193.37, 1);
+    });
+
+    test('el subsidio solo aplica hasta 11,492.66 y enero usa 536.21', () => {
+      expect(lib.calcularISRNomina(11492.67).subsidio).toBe(0);
+      expect(lib.calcularISRNomina(5000, { mes: 1 }).subsidio).toBe(536.21);
+    });
+
+    test('IMSS del salario minimo: cuota obrera diaria x 30', () => {
+      // SBC 315.04: 0.25% + 0.375% + 0.625% + 1.125% = 2.375% -> 7.482 diarios
+      const r = lib.calcularIMSS(315.04 * 30);
+      expect(r.totales.obrera).toBeCloseTo(7.482 * 30, 0);
+    });
+
+    test('no falla entre dos renglones de la tarifa', () => {
+      expect(() => lib.calcularISRNomina(844.595)).not.toThrow();
     });
   });
 });
